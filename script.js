@@ -14,8 +14,9 @@
  */
 
 // State data with political affiliation and legislative info
+// Note: This is representative mock data for demonstration purposes
+// Data sources: State capitals are factual, political data is illustrative
 const stateData = {
-    // Note: This is illustrative data for 2025
     CA: { name: 'California', capital: 'Sacramento', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 100, y: 340 },
     TX: { name: 'Texas', capital: 'Austin', governor: 'R', legislature: 'Republican', party: 'republican', x: 480, y: 420 },
     FL: { name: 'Florida', capital: 'Tallahassee', governor: 'R', legislature: 'Republican', party: 'republican', x: 780, y: 460 },
@@ -247,7 +248,12 @@ function updateInfoPanel(data) {
     document.getElementById('state-name').textContent = data.name;
     document.getElementById('state-info').textContent = `View ${data.name} legislative composition`;
     document.getElementById('state-capital').textContent = data.capital;
-    document.getElementById('state-governor').textContent = data.governor === 'D' ? 'Democrat' : 'Republican';
+    
+    // Display governor party with explicit checks
+    const governorParty = data.governor === 'D' ? 'Democrat' : 
+                         data.governor === 'R' ? 'Republican' : 
+                         'Unknown';
+    document.getElementById('state-governor').textContent = governorParty;
     document.getElementById('state-legislature').textContent = data.legislature;
     
     // Smooth scroll on mobile
