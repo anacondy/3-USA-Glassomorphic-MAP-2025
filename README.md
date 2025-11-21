@@ -1,4 +1,4 @@
-# 🇺🇸 USA Glassomorphic Map 2025
+# 🇺🇸 US Political Dashboard 2025
 
 **🔗 Live Demo:** [https://anacondy.github.io/3-USA-Glassomorphic-MAP-2025/](https://anacondy.github.io/3-USA-Glassomorphic-MAP-2025/)
 
@@ -12,26 +12,26 @@
 
 ## 📖 Overview
 
-An interactive, visually stunning USA map featuring cutting-edge glassomorphic design. This web application showcases all 50 states plus Washington D.C. with real-time interactivity, beautiful gradient backgrounds, and smooth animations. Fully optimized for mobile devices with 16:9 and 20:9 aspect ratios.
+An interactive USA political governance map with a sleek dark theme. This web application visualizes all 50 states plus Washington D.C. with political party coloring (Democrat/Republican), interactive state selection, and legislative composition data. Fully optimized for mobile devices with 16:9 and 20:9 aspect ratios.
 
 ## ✨ Features
 
-- **🎨 Glassomorphic Design**: Beautiful frosted glass effect with backdrop filters
+- **🗳️ Political Map**: Dark-themed USA map with Democrat (blue) and Republican (red) state coloring
 - **📱 Mobile Optimized**: Perfect display on 16:9 and 20:9 aspect ratio phones
-- **🖱️ Interactive Map**: Click any state to view detailed information
-- **📊 State Data**: View capital, population, and area for each state
+- **🖱️ Interactive**: Click any state to view governor, capital, and legislature information
+- **📊 Legislative Data**: View political composition for each state
 - **🔒 Security Protected**: CSP headers, input sanitization, and XSS prevention
 - **♿ Accessible**: Keyboard navigation and screen reader support
 - **🌈 Responsive**: Adapts seamlessly to all screen sizes
-- **⚡ Smooth Animations**: Hardware-accelerated transitions and effects
+- **⚡ Smooth Interactions**: Hardware-accelerated transitions
 
 ## 🖼️ Screenshots
 
-### Desktop View
+### Desktop View - Dark Theme
 ![Desktop View](https://github.com/user-attachments/assets/924fb111-1dd3-45f1-a4ff-c7da3e72efeb)
 
 ### Interactive State Selection
-![California Selected](https://github.com/user-attachments/assets/70ddbded-e19f-47d6-bd0d-65ee30673a1c)
+![State Selected](https://github.com/user-attachments/assets/70ddbded-e19f-47d6-bd0d-65ee30673a1c)
 
 ### Mobile View (16:9)
 ![Mobile 16:9](https://github.com/user-attachments/assets/b3c6ada1-0907-4ad2-b545-949a03b9790b)
@@ -107,7 +107,7 @@ This application implements multiple security measures:
 ## 🛠️ Technology Stack
 
 - **HTML5**: Semantic markup with proper accessibility
-- **CSS3**: Modern features including backdrop-filter, gradients, and animations
+- **CSS3**: Dark theme with responsive media queries
 - **JavaScript (Vanilla)**: No frameworks, pure ES6+ code
 - **SVG**: Scalable vector graphics for the interactive map
 
@@ -116,8 +116,8 @@ This application implements multiple security measures:
 ```
 3-USA-Glassomorphic-MAP-2025/
 ├── index.html          # Main HTML structure
-├── styles.css          # Glassomorphic styling and responsive design
-├── script.js           # Interactive functionality and state data
+├── styles.css          # Dark theme styling and responsive design
+├── script.js           # Interactive functionality with political data
 ├── .gitignore          # Git ignore rules
 ├── LICENSE             # Project license
 └── README.md           # This file
@@ -131,33 +131,34 @@ This application implements multiple security measures:
 - ✅ Opera 74+
 - ✅ Mobile browsers (iOS Safari, Chrome Mobile)
 
-**Note**: Glassmorphism effects require modern browsers with backdrop-filter support.
+**Note**: Dark theme works best on modern browsers with full CSS3 support.
 
 ## 🎯 Key Interactions
 
-1. **Click/Tap a State**: View detailed information
+1. **Click/Tap a State**: View governor, capital, and legislative info
 2. **Keyboard Navigation**: Tab through states, Enter/Space to select
 3. **Mobile Gestures**: Smooth touch interactions with visual feedback
-4. **State Highlighting**: Active state shows with enhanced glow effect
+4. **State Highlighting**: Selected state shows with white fill
 
 ## 📊 State Data
 
 Each state includes:
 - Full name
 - State capital
-- Population (approximate)
-- Total area in square miles
+- Governor party affiliation
+- Legislative composition (Democrat, Republican, or Split)
+- Political party color coding (Blue/Red/Gray)
 
 Covering all 50 states plus Washington D.C.
 
 ## 🎨 Design Philosophy
 
-The glassomorphic design creates a modern, elegant interface with:
-- **Frosted glass panels** using backdrop filters
-- **Gradient backgrounds** for depth and visual interest
+The dark-themed political map creates a modern, professional interface with:
+- **Dark background** for reduced eye strain
+- **Political color coding** (Blue for Democratic, Red for Republican)
+- **Clean, minimal design** focusing on the map
+- **High contrast** for optimal readability
 - **Smooth transitions** for professional user experience
-- **Color-coded states** for better visual hierarchy
-- **High contrast text** for optimal readability
 
 ## 🌐 GitHub Pages Deployment
 
@@ -177,7 +178,7 @@ The site will be available at: `https://anacondy.github.io/3-USA-Glassomorphic-M
 
 **Puppy Pilot** & **Anacondy**
 
-*"We got him"* - Mission Accomplished
+*"For God and country - Geronimo"* - Mission Accomplished
 
 ## 📜 License
 

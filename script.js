@@ -1,125 +1,126 @@
 /**
- * USA Glassomorphic Map 2025
+ * US Political Dashboard 2025
  * Interactive JavaScript functionality
  * 
  * Authors: Puppy Pilot & Anacondy
- * "We got him" - Zero Dark Thirty
+ * "For God and country - Geronimo" - Zero Dark Thirty
  * 
  * This script handles:
- * - SVG map rendering
+ * - SVG map rendering with political coloring
  * - State interactions (click, hover)
- * - Data display in info panel
+ * - Legislative data display
  * - Mobile touch event handling
- * - Input sanitization for security
+ * - Security: XSS prevention via textContent
  */
 
-// State data with capitals, population, and area
+// State data with political affiliation and legislative info
 const stateData = {
-    CA: { name: 'California', capital: 'Sacramento', population: '39.5M', area: '163,696 sq mi', x: 100, y: 280 },
-    TX: { name: 'Texas', capital: 'Austin', population: '29.1M', area: '268,596 sq mi', x: 480, y: 420 },
-    FL: { name: 'Florida', capital: 'Tallahassee', population: '21.5M', area: '65,758 sq mi', x: 750, y: 470 },
-    NY: { name: 'New York', capital: 'Albany', population: '19.5M', area: '54,555 sq mi', x: 820, y: 180 },
-    PA: { name: 'Pennsylvania', capital: 'Harrisburg', population: '12.8M', area: '46,054 sq mi', x: 780, y: 220 },
-    IL: { name: 'Illinois', capital: 'Springfield', population: '12.7M', area: '57,914 sq mi', x: 620, y: 240 },
-    OH: { name: 'Ohio', capital: 'Columbus', population: '11.7M', area: '44,826 sq mi', x: 700, y: 240 },
-    GA: { name: 'Georgia', capital: 'Atlanta', population: '10.6M', area: '59,425 sq mi', x: 720, y: 400 },
-    NC: { name: 'North Carolina', capital: 'Raleigh', population: '10.4M', area: '53,819 sq mi', x: 760, y: 360 },
-    MI: { name: 'Michigan', capital: 'Lansing', population: '10M', area: '96,714 sq mi', x: 680, y: 180 },
-    WA: { name: 'Washington', capital: 'Olympia', population: '7.7M', area: '71,298 sq mi', x: 120, y: 80 },
-    AZ: { name: 'Arizona', capital: 'Phoenix', population: '7.2M', area: '113,990 sq mi', x: 200, y: 380 },
-    MA: { name: 'Massachusetts', capital: 'Boston', population: '6.9M', area: '10,554 sq mi', x: 860, y: 160 },
-    TN: { name: 'Tennessee', capital: 'Nashville', population: '6.8M', area: '42,144 sq mi', x: 680, y: 340 },
-    IN: { name: 'Indiana', capital: 'Indianapolis', population: '6.7M', area: '36,420 sq mi', x: 660, y: 260 },
-    MO: { name: 'Missouri', capital: 'Jefferson City', population: '6.1M', area: '69,707 sq mi', x: 580, y: 300 },
-    MD: { name: 'Maryland', capital: 'Annapolis', population: '6.1M', area: '12,406 sq mi', x: 800, y: 280 },
-    WI: { name: 'Wisconsin', capital: 'Madison', population: '5.8M', area: '65,496 sq mi', x: 620, y: 160 },
-    CO: { name: 'Colorado', capital: 'Denver', population: '5.8M', area: '104,094 sq mi', x: 340, y: 280 },
-    MN: { name: 'Minnesota', capital: 'St. Paul', population: '5.6M', area: '86,936 sq mi', x: 560, y: 120 },
-    SC: { name: 'South Carolina', capital: 'Columbia', population: '5.1M', area: '32,020 sq mi', x: 750, y: 400 },
-    AL: { name: 'Alabama', capital: 'Montgomery', population: '5M', area: '52,420 sq mi', x: 680, y: 400 },
-    LA: { name: 'Louisiana', capital: 'Baton Rouge', population: '4.6M', area: '52,378 sq mi', x: 600, y: 450 },
-    KY: { name: 'Kentucky', capital: 'Frankfort', population: '4.5M', area: '40,408 sq mi', x: 680, y: 300 },
-    OR: { name: 'Oregon', capital: 'Salem', population: '4.2M', area: '98,379 sq mi', x: 100, y: 140 },
-    OK: { name: 'Oklahoma', capital: 'Oklahoma City', population: '4M', area: '69,899 sq mi', x: 500, y: 360 },
-    CT: { name: 'Connecticut', capital: 'Hartford', population: '3.6M', area: '5,543 sq mi', x: 850, y: 180 },
-    UT: { name: 'Utah', capital: 'Salt Lake City', population: '3.2M', area: '84,897 sq mi', x: 260, y: 260 },
-    IA: { name: 'Iowa', capital: 'Des Moines', population: '3.2M', area: '56,273 sq mi', x: 560, y: 220 },
-    NV: { name: 'Nevada', capital: 'Carson City', population: '3.1M', area: '110,572 sq mi', x: 180, y: 260 },
-    AR: { name: 'Arkansas', capital: 'Little Rock', population: '3M', area: '53,179 sq mi', x: 600, y: 360 },
-    KS: { name: 'Kansas', capital: 'Topeka', population: '2.9M', area: '82,278 sq mi', x: 500, y: 280 },
-    NM: { name: 'New Mexico', capital: 'Santa Fe', population: '2.1M', area: '121,590 sq mi', x: 320, y: 380 },
-    NE: { name: 'Nebraska', capital: 'Lincoln', population: '1.9M', area: '77,348 sq mi', x: 480, y: 240 },
-    WV: { name: 'West Virginia', capital: 'Charleston', population: '1.8M', area: '24,230 sq mi', x: 740, y: 290 },
-    ID: { name: 'Idaho', capital: 'Boise', population: '1.8M', area: '83,569 sq mi', x: 220, y: 140 },
-    HI: { name: 'Hawaii', capital: 'Honolulu', population: '1.4M', area: '10,932 sq mi', x: 280, y: 520 },
-    NH: { name: 'New Hampshire', capital: 'Concord', population: '1.4M', area: '9,349 sq mi', x: 860, y: 140 },
-    ME: { name: 'Maine', capital: 'Augusta', population: '1.3M', area: '35,380 sq mi', x: 880, y: 100 },
-    RI: { name: 'Rhode Island', capital: 'Providence', population: '1.1M', area: '1,545 sq mi', x: 870, y: 170 },
-    MT: { name: 'Montana', capital: 'Helena', population: '1.1M', area: '147,040 sq mi', x: 300, y: 100 },
-    DE: { name: 'Delaware', capital: 'Dover', population: '990K', area: '2,489 sq mi', x: 810, y: 270 },
-    SD: { name: 'South Dakota', capital: 'Pierre', population: '880K', area: '77,116 sq mi', x: 460, y: 160 },
-    ND: { name: 'North Dakota', capital: 'Bismarck', population: '760K', area: '70,698 sq mi', x: 460, y: 100 },
-    AK: { name: 'Alaska', capital: 'Juneau', population: '730K', area: '665,384 sq mi', x: 100, y: 520 },
-    VT: { name: 'Vermont', capital: 'Montpelier', population: '640K', area: '9,616 sq mi', x: 850, y: 130 },
-    WY: { name: 'Wyoming', capital: 'Cheyenne', population: '580K', area: '97,813 sq mi', x: 360, y: 200 },
-    DC: { name: 'Washington DC', capital: 'Washington DC', population: '700K', area: '68 sq mi', x: 800, y: 270 }
+    // Note: This is illustrative data for 2025
+    CA: { name: 'California', capital: 'Sacramento', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 100, y: 340 },
+    TX: { name: 'Texas', capital: 'Austin', governor: 'R', legislature: 'Republican', party: 'republican', x: 480, y: 420 },
+    FL: { name: 'Florida', capital: 'Tallahassee', governor: 'R', legislature: 'Republican', party: 'republican', x: 780, y: 460 },
+    NY: { name: 'New York', capital: 'Albany', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 840, y: 180 },
+    PA: { name: 'Pennsylvania', capital: 'Harrisburg', governor: 'D', legislature: 'Split', party: 'neutral', x: 800, y: 240 },
+    IL: { name: 'Illinois', capital: 'Springfield', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 640, y: 260 },
+    OH: { name: 'Ohio', capital: 'Columbus', governor: 'R', legislature: 'Republican', party: 'republican', x: 720, y: 260 },
+    GA: { name: 'Georgia', capital: 'Atlanta', governor: 'R', legislature: 'Republican', party: 'republican', x: 740, y: 410 },
+    NC: { name: 'North Carolina', capital: 'Raleigh', governor: 'D', legislature: 'Republican', party: 'neutral', x: 780, y: 370 },
+    MI: { name: 'Michigan', capital: 'Lansing', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 700, y: 200 },
+    WA: { name: 'Washington', capital: 'Olympia', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 120, y: 100 },
+    AZ: { name: 'Arizona', capital: 'Phoenix', governor: 'D', legislature: 'Republican', party: 'neutral', x: 200, y: 400 },
+    MA: { name: 'Massachusetts', capital: 'Boston', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 880, y: 160 },
+    TN: { name: 'Tennessee', capital: 'Nashville', governor: 'R', legislature: 'Republican', party: 'republican', x: 700, y: 350 },
+    IN: { name: 'Indiana', capital: 'Indianapolis', governor: 'R', legislature: 'Republican', party: 'republican', x: 680, y: 280 },
+    MO: { name: 'Missouri', capital: 'Jefferson City', governor: 'R', legislature: 'Republican', party: 'republican', x: 600, y: 310 },
+    MD: { name: 'Maryland', capital: 'Annapolis', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 820, y: 280 },
+    WI: { name: 'Wisconsin', capital: 'Madison', governor: 'D', legislature: 'Split', party: 'neutral', x: 640, y: 180 },
+    CO: { name: 'Colorado', capital: 'Denver', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 360, y: 300 },
+    MN: { name: 'Minnesota', capital: 'St. Paul', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 580, y: 140 },
+    SC: { name: 'South Carolina', capital: 'Columbia', governor: 'R', legislature: 'Republican', party: 'republican', x: 770, y: 400 },
+    AL: { name: 'Alabama', capital: 'Montgomery', governor: 'R', legislature: 'Republican', party: 'republican', x: 700, y: 420 },
+    LA: { name: 'Louisiana', capital: 'Baton Rouge', governor: 'R', legislature: 'Republican', party: 'republican', x: 620, y: 460 },
+    KY: { name: 'Kentucky', capital: 'Frankfort', governor: 'D', legislature: 'Republican', party: 'neutral', x: 720, y: 310 },
+    OR: { name: 'Oregon', capital: 'Salem', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 110, y: 160 },
+    OK: { name: 'Oklahoma', capital: 'Oklahoma City', governor: 'R', legislature: 'Republican', party: 'republican', x: 520, y: 370 },
+    CT: { name: 'Connecticut', capital: 'Hartford', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 870, y: 180 },
+    UT: { name: 'Utah', capital: 'Salt Lake City', governor: 'R', legislature: 'Republican', party: 'republican', x: 280, y: 270 },
+    IA: { name: 'Iowa', capital: 'Des Moines', governor: 'R', legislature: 'Republican', party: 'republican', x: 580, y: 240 },
+    NV: { name: 'Nevada', capital: 'Carson City', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 170, y: 290 },
+    AR: { name: 'Arkansas', capital: 'Little Rock', governor: 'R', legislature: 'Republican', party: 'republican', x: 620, y: 370 },
+    KS: { name: 'Kansas', capital: 'Topeka', governor: 'D', legislature: 'Republican', party: 'neutral', x: 520, y: 300 },
+    NM: { name: 'New Mexico', capital: 'Santa Fe', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 340, y: 400 },
+    NE: { name: 'Nebraska', capital: 'Lincoln', governor: 'R', legislature: 'Republican', party: 'republican', x: 500, y: 250 },
+    WV: { name: 'West Virginia', capital: 'Charleston', governor: 'R', legislature: 'Republican', party: 'republican', x: 760, y: 300 },
+    ID: { name: 'Idaho', capital: 'Boise', governor: 'R', legislature: 'Republican', party: 'republican', x: 220, y: 160 },
+    HI: { name: 'Hawaii', capital: 'Honolulu', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 260, y: 530 },
+    NH: { name: 'New Hampshire', capital: 'Concord', governor: 'R', legislature: 'Republican', party: 'republican', x: 880, y: 140 },
+    ME: { name: 'Maine', capital: 'Augusta', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 900, y: 100 },
+    RI: { name: 'Rhode Island', capital: 'Providence', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 890, y: 170 },
+    MT: { name: 'Montana', capital: 'Helena', governor: 'R', legislature: 'Republican', party: 'republican', x: 320, y: 120 },
+    DE: { name: 'Delaware', capital: 'Dover', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 830, y: 280 },
+    SD: { name: 'South Dakota', capital: 'Pierre', governor: 'R', legislature: 'Republican', party: 'republican', x: 480, y: 180 },
+    ND: { name: 'North Dakota', capital: 'Bismarck', governor: 'R', legislature: 'Republican', party: 'republican', x: 480, y: 120 },
+    AK: { name: 'Alaska', capital: 'Juneau', governor: 'R', legislature: 'Republican', party: 'republican', x: 140, y: 530 },
+    VT: { name: 'Vermont', capital: 'Montpelier', governor: 'R', legislature: 'Democrat', party: 'neutral', x: 870, y: 130 },
+    WY: { name: 'Wyoming', capital: 'Cheyenne', governor: 'R', legislature: 'Republican', party: 'republican', x: 380, y: 220 },
+    DC: { name: 'Washington DC', capital: 'Washington DC', governor: 'D', legislature: 'Democrat', party: 'democratic', x: 820, y: 290 }
 };
 
-// Simplified USA state paths for SVG rendering
-// These are approximate representations for the glassomorphic map
+// Simplified but more accurate state paths for better visual representation
+// These paths create a more recognizable USA map shape
 const statePaths = {
-    CA: 'M 50,200 L 80,180 L 120,200 L 140,250 L 150,320 L 130,380 L 100,400 L 70,380 L 60,320 L 50,260 Z',
-    TX: 'M 420,320 L 520,320 L 540,360 L 540,420 L 520,480 L 460,490 L 400,480 L 380,440 L 400,380 Z',
-    FL: 'M 720,420 L 760,420 L 780,440 L 800,480 L 790,510 L 770,520 L 740,510 L 720,490 L 710,460 Z',
-    NY: 'M 780,140 L 840,140 L 860,160 L 860,190 L 840,210 L 800,220 L 780,200 L 770,170 Z',
-    PA: 'M 740,200 L 810,200 L 820,220 L 810,240 L 760,250 L 740,230 Z',
-    IL: 'M 600,200 L 640,200 L 650,260 L 640,300 L 600,310 L 590,260 Z',
-    OH: 'M 670,210 L 720,210 L 730,240 L 730,270 L 700,280 L 670,270 L 660,240 Z',
-    GA: 'M 700,360 L 740,360 L 750,400 L 740,440 L 710,450 L 690,430 L 680,390 Z',
-    NC: 'M 720,330 L 790,330 L 810,350 L 810,380 L 780,390 L 730,380 L 710,360 Z',
-    MI: 'M 650,140 L 700,140 L 710,170 L 710,210 L 680,220 L 650,210 L 640,180 Z',
-    WA: 'M 80,40 L 160,40 L 170,70 L 170,110 L 140,120 L 90,120 L 70,90 Z',
-    AZ: 'M 160,340 L 230,340 L 240,380 L 240,420 L 210,430 L 170,420 L 150,380 Z',
-    MA: 'M 830,140 L 880,140 L 890,160 L 890,180 L 860,190 L 830,180 Z',
-    TN: 'M 640,310 L 720,310 L 730,330 L 730,360 L 700,370 L 650,360 L 630,340 Z',
-    IN: 'M 640,230 L 680,230 L 690,270 L 680,290 L 650,300 L 640,270 Z',
-    MO: 'M 540,260 L 610,260 L 620,300 L 610,330 L 570,340 L 540,320 L 530,290 Z',
-    MD: 'M 770,260 L 820,260 L 830,280 L 820,300 L 780,310 L 770,290 Z',
-    WI: 'M 590,120 L 640,120 L 650,160 L 650,200 L 620,210 L 590,200 L 580,160 Z',
-    CO: 'M 300,240 L 380,240 L 390,280 L 390,320 L 360,330 L 310,330 L 290,300 Z',
-    MN: 'M 520,80 L 590,80 L 600,120 L 600,160 L 570,170 L 530,160 L 510,120 Z',
-    SC: 'M 720,370 L 770,370 L 780,400 L 770,430 L 740,440 L 720,420 Z',
-    AL: 'M 660,370 L 700,370 L 710,410 L 700,440 L 670,450 L 660,410 Z',
-    LA: 'M 560,410 L 620,410 L 630,440 L 630,480 L 600,490 L 570,480 L 550,450 Z',
-    KY: 'M 650,280 L 710,280 L 720,300 L 710,320 L 670,330 L 650,310 Z',
-    OR: 'M 60,100 L 140,100 L 150,130 L 150,170 L 120,180 L 70,170 L 50,140 Z',
-    OK: 'M 460,320 L 530,320 L 540,350 L 540,390 L 510,400 L 470,390 L 450,360 Z',
-    CT: 'M 840,160 L 870,160 L 880,180 L 870,200 L 850,210 L 840,190 Z',
-    UT: 'M 230,220 L 290,220 L 300,260 L 300,300 L 270,310 L 240,300 L 220,270 Z',
-    IA: 'M 530,190 L 590,190 L 600,220 L 590,250 L 550,260 L 530,240 Z',
-    NV: 'M 140,210 L 210,210 L 220,250 L 220,300 L 190,310 L 150,300 L 130,260 Z',
-    AR: 'M 570,330 L 620,330 L 630,360 L 620,390 L 590,400 L 570,370 Z',
-    KS: 'M 460,250 L 530,250 L 540,280 L 530,310 L 490,320 L 460,300 Z',
-    NM: 'M 280,340 L 350,340 L 360,380 L 360,420 L 330,430 L 290,420 L 270,380 Z',
-    NE: 'M 440,210 L 510,210 L 520,240 L 510,270 L 470,280 L 440,260 Z',
-    WV: 'M 710,270 L 760,270 L 770,290 L 760,310 L 730,320 L 710,300 Z',
-    ID: 'M 180,100 L 250,100 L 260,140 L 260,180 L 230,190 L 190,180 L 170,150 Z',
-    HI: 'M 250,500 L 300,500 L 310,520 L 300,540 L 270,550 L 250,530 Z',
-    NH: 'M 850,120 L 880,120 L 890,140 L 880,160 L 860,170 L 850,150 Z',
-    ME: 'M 870,70 L 910,70 L 920,90 L 920,120 L 900,130 L 870,120 L 860,100 Z',
-    RI: 'M 860,155 L 885,155 L 890,170 L 885,185 L 870,190 L 860,180 Z',
-    MT: 'M 260,60 L 340,60 L 350,90 L 350,130 L 320,140 L 270,130 L 250,100 Z',
-    DE: 'M 800,250 L 820,250 L 830,270 L 820,290 L 810,300 L 800,280 Z',
-    SD: 'M 420,130 L 490,130 L 500,160 L 490,190 L 450,200 L 420,180 Z',
-    ND: 'M 420,70 L 490,70 L 500,100 L 490,130 L 450,140 L 420,120 Z',
-    AK: 'M 60,500 L 130,500 L 140,520 L 130,540 L 100,550 L 60,540 L 50,520 Z',
-    VT: 'M 840,110 L 870,110 L 880,130 L 870,150 L 850,160 L 840,140 Z',
-    WY: 'M 320,170 L 390,170 L 400,200 L 390,230 L 350,240 L 320,220 Z',
-    DC: 'M 795,265 L 805,265 L 810,270 L 805,280 L 795,280 Z'
+    CA: 'M 50,250 L 100,220 L 140,240 L 150,280 L 160,340 L 170,400 L 150,440 L 120,450 L 90,440 L 70,400 L 60,350 L 50,300 Z',
+    TX: 'M 400,340 L 500,340 L 540,360 L 560,400 L 560,450 L 540,490 L 500,500 L 440,500 L 400,490 L 380,450 L 390,400 L 390,360 Z',
+    FL: 'M 740,420 L 780,420 L 810,440 L 830,480 L 820,510 L 800,520 L 770,515 L 750,500 L 730,470 L 720,440 Z',
+    NY: 'M 800,150 L 860,145 L 880,160 L 885,185 L 880,210 L 850,225 L 810,230 L 790,215 L 780,185 L 785,160 Z',
+    PA: 'M 760,210 L 830,210 L 845,230 L 840,255 L 810,270 L 770,275 L 750,260 L 745,235 Z',
+    IL: 'M 610,220 L 655,220 L 670,250 L 675,290 L 665,320 L 630,330 L 605,320 L 595,280 L 600,245 Z',
+    OH: 'M 690,220 L 740,220 L 755,245 L 755,275 L 735,295 L 700,300 L 680,285 L 675,250 Z',
+    GA: 'M 715,370 L 760,370 L 775,395 L 780,430 L 770,455 L 740,465 L 710,455 L 695,425 L 690,390 Z',
+    NC: 'M 740,340 L 810,340 L 830,360 L 835,385 L 820,405 L 775,410 L 745,395 L 720,370 Z',
+    MI: 'M 670,150 L 720,145 L 740,165 L 745,195 L 740,220 L 710,235 L 680,230 L 660,210 L 655,180 Z',
+    WA: 'M 70,60 L 160,60 L 175,85 L 180,125 L 160,140 L 110,145 L 70,135 L 55,105 Z',
+    AZ: 'M 160,360 L 230,360 L 245,390 L 250,430 L 230,445 L 190,440 L 160,420 L 150,385 Z',
+    MA: 'M 850,140 L 900,135 L 915,150 L 920,170 L 905,185 L 870,190 L 850,175 Z',
+    TN: 'M 660,320 L 740,320 L 755,340 L 755,370 L 730,385 L 680,380 L 650,365 L 640,340 Z',
+    IN: 'M 660,250 L 700,250 L 715,275 L 715,305 L 695,325 L 665,330 L 650,310 L 645,280 Z',
+    MO: 'M 560,270 L 625,270 L 640,295 L 640,335 L 615,355 L 575,360 L 550,345 L 540,315 L 545,290 Z',
+    MD: 'M 790,260 L 840,260 L 855,275 L 850,300 L 820,315 L 790,310 L 775,290 Z',
+    WI: 'M 610,140 L 660,135 L 680,155 L 685,190 L 680,220 L 650,235 L 615,230 L 595,205 L 590,170 Z',
+    CO: 'M 320,260 L 400,260 L 415,290 L 420,330 L 395,345 L 345,350 L 310,340 L 300,310 Z',
+    MN: 'M 540,90 L 605,85 L 625,105 L 635,145 L 630,180 L 600,195 L 555,190 L 530,170 L 520,130 Z',
+    SC: 'M 740,370 L 790,370 L 805,390 L 805,420 L 785,440 L 755,445 L 735,425 L 725,395 Z',
+    AL: 'M 680,380 L 720,380 L 735,405 L 735,445 L 715,465 L 685,470 L 665,450 L 660,415 Z',
+    LA: 'M 580,420 L 640,420 L 660,445 L 665,480 L 645,500 L 605,505 L 575,495 L 560,465 Z',
+    KY: 'M 670,290 L 730,290 L 745,310 L 745,335 L 720,350 L 680,345 L 655,330 Z',
+    OR: 'M 60,120 L 150,115 L 165,140 L 170,180 L 150,200 L 100,205 L 65,195 L 50,165 Z',
+    OK: 'M 480,330 L 560,330 L 575,355 L 580,390 L 560,410 L 515,415 L 485,400 L 465,370 Z',
+    CT: 'M 855,165 L 885,165 L 895,180 L 890,200 L 870,210 L 855,195 Z',
+    UT: 'M 240,230 L 310,230 L 325,260 L 330,305 L 305,320 L 265,320 L 235,305 L 225,270 Z',
+    IA: 'M 550,210 L 605,210 L 620,230 L 620,265 L 595,285 L 555,285 L 535,265 L 530,235 Z',
+    NV: 'M 140,250 L 210,250 L 225,280 L 230,330 L 205,350 L 165,345 L 140,320 L 130,280 Z',
+    AR: 'M 590,340 L 640,340 L 655,365 L 655,395 L 630,415 L 595,415 L 575,395 L 570,365 Z',
+    KS: 'M 480,270 L 550,270 L 565,295 L 565,325 L 540,345 L 495,345 L 475,325 L 470,295 Z',
+    NM: 'M 300,360 L 370,360 L 385,390 L 390,435 L 365,450 L 320,450 L 295,430 L 285,395 Z',
+    NE: 'M 460,220 L 530,220 L 545,245 L 545,280 L 520,300 L 475,300 L 455,280 L 450,250 Z',
+    WV: 'M 740,270 L 780,270 L 795,290 L 790,320 L 765,335 L 735,330 L 720,310 Z',
+    ID: 'M 180,120 L 260,115 L 280,140 L 290,180 L 275,210 L 235,215 L 195,205 L 175,175 Z',
+    HI: 'M 230,510 L 290,510 L 305,525 L 300,545 L 275,555 L 235,550 L 220,535 Z',
+    NH: 'M 865,120 L 895,115 L 905,130 L 900,155 L 880,170 L 865,160 Z',
+    ME: 'M 885,65 L 925,60 L 940,80 L 945,115 L 925,135 L 895,140 L 875,120 L 870,90 Z',
+    RI: 'M 880,160 L 905,160 L 915,172 L 910,188 L 890,196 L 880,185 Z',
+    MT: 'M 280,75 L 380,70 L 400,95 L 410,140 L 390,160 L 330,165 L 280,155 L 260,125 Z',
+    DE: 'M 815,265 L 840,265 L 850,280 L 845,300 L 830,310 L 815,300 Z',
+    SD: 'M 440,150 L 510,145 L 525,170 L 530,205 L 505,225 L 455,225 L 435,205 L 430,175 Z',
+    ND: 'M 440,85 L 510,80 L 525,105 L 530,140 L 505,160 L 455,160 L 435,140 L 430,110 Z',
+    AK: 'M 100,500 L 170,495 L 185,515 L 180,540 L 155,555 L 110,555 L 90,540 L 85,520 Z',
+    VT: 'M 855,110 L 880,105 L 890,120 L 885,145 L 870,160 L 855,150 Z',
+    WY: 'M 340,180 L 420,175 L 435,200 L 440,240 L 415,260 L 365,265 L 335,245 L 325,215 Z',
+    DC: 'M 812,283 L 825,283 L 832,290 L 827,302 L 815,306 L 808,298 Z'
 };
 
-// Currently active state
-let activeState = null;
+// Currently selected state
+let selectedState = null;
 
 /**
  * Initialize the map when DOM is loaded
@@ -131,40 +132,49 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Render the SVG map with all states
- * Creates path elements for each state with proper attributes
+ * Render the SVG map with all states and political coloring
  */
 function renderMap() {
     const svg = document.getElementById('usa-map');
     
-    // Clear any existing content
+    // Clear existing content
     svg.innerHTML = '';
     
-    // Create a group for all states
+    // Create background
+    const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    background.setAttribute('width', '100%');
+    background.setAttribute('height', '100%');
+    background.setAttribute('fill', '#1a1a1a');
+    svg.appendChild(background);
+    
+    // Create states group
     const statesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     statesGroup.setAttribute('id', 'states-group');
     
-    // Render each state
+    // Render each state with political coloring
     for (const [code, pathData] of Object.entries(statePaths)) {
+        const stateInfo = stateData[code];
+        if (!stateInfo) continue;
+        
         // Create path element
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', pathData);
-        path.setAttribute('class', 'state');
+        path.setAttribute('class', `state ${stateInfo.party}`);
         path.setAttribute('data-state', code);
         path.setAttribute('id', `state-${code}`);
         
-        // Add accessibility attributes
+        // Accessibility attributes
         path.setAttribute('role', 'button');
-        path.setAttribute('aria-label', stateData[code]?.name || code);
+        path.setAttribute('aria-label', stateInfo.name);
         path.setAttribute('tabindex', '0');
         
         statesGroup.appendChild(path);
         
-        // Add state label if position is defined
-        if (stateData[code] && stateData[code].x && stateData[code].y) {
+        // Add state label
+        if (stateInfo.x && stateInfo.y) {
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', stateData[code].x);
-            text.setAttribute('y', stateData[code].y);
+            text.setAttribute('x', stateInfo.x);
+            text.setAttribute('y', stateInfo.y);
             text.setAttribute('class', 'state-label');
             text.textContent = code;
             statesGroup.appendChild(text);
@@ -176,7 +186,6 @@ function renderMap() {
 
 /**
  * Setup event listeners for state interactions
- * Handles click events and keyboard navigation
  */
 function setupEventListeners() {
     const states = document.querySelectorAll('.state');
@@ -187,78 +196,61 @@ function setupEventListeners() {
             handleStateClick(this);
         });
         
-        // Keyboard navigation support
+        // Keyboard navigation
         state.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 handleStateClick(this);
             }
         });
-        
-        // Hover effect (desktop only)
-        if (window.matchMedia('(hover: hover)').matches) {
-            state.addEventListener('mouseenter', function() {
-                if (!this.classList.contains('active')) {
-                    this.style.filter = 'brightness(1.2)';
-                }
-            });
-            
-            state.addEventListener('mouseleave', function() {
-                if (!this.classList.contains('active')) {
-                    this.style.filter = '';
-                }
-            });
-        }
     });
 }
 
 /**
- * Handle state click/selection
- * Updates UI and displays state information
+ * Handle state selection
  * @param {Element} stateElement - The clicked state SVG element
  */
 function handleStateClick(stateElement) {
     const stateCode = stateElement.getAttribute('data-state');
     const data = stateData[stateCode];
     
-    // Input validation - ensure state code exists
     if (!data || !stateCode) {
         console.error('Invalid state selection');
         return;
     }
     
-    // Remove active class from previous state
-    if (activeState) {
-        activeState.classList.remove('active');
+    // Remove selected class from previous state
+    if (selectedState) {
+        selectedState.classList.remove('selected');
     }
     
-    // Add active class to new state
-    stateElement.classList.add('active');
-    activeState = stateElement;
+    // Add selected class to new state
+    stateElement.classList.add('selected');
+    selectedState = stateElement;
     
-    // Update info panel with sanitized data
+    // Update info panel
     updateInfoPanel(data);
     
-    // Haptic feedback for mobile devices
+    // Haptic feedback for mobile
     if (navigator.vibrate) {
-        navigator.vibrate(50);
+        navigator.vibrate(30);
     }
 }
 
 /**
  * Update the information panel with state data
- * Uses textContent to prevent XSS attacks (automatically escapes HTML)
+ * Uses textContent to prevent XSS attacks
  * @param {Object} data - State data object
  */
 function updateInfoPanel(data) {
     // Update DOM elements - textContent automatically prevents XSS
     document.getElementById('state-name').textContent = data.name;
-    document.getElementById('state-info').textContent = `Explore ${data.name} - The ${data.capital} State`;
+    document.getElementById('state-info').textContent = `View ${data.name} legislative composition`;
     document.getElementById('state-capital').textContent = data.capital;
-    document.getElementById('state-population').textContent = data.population;
-    document.getElementById('state-area').textContent = data.area;
+    document.getElementById('state-governor').textContent = data.governor === 'D' ? 'Democrat' : 'Republican';
+    document.getElementById('state-legislature').textContent = data.legislature;
     
-    // Smooth scroll to info panel on mobile
+    // Smooth scroll on mobile
     if (window.innerWidth < 768) {
         const infoPanel = document.querySelector('.info-panel');
         if (infoPanel) {
@@ -272,13 +264,12 @@ function updateInfoPanel(data) {
 
 /**
  * Add touch support optimizations for mobile devices
- * Improves responsiveness and prevents double-tap zoom
  */
 function addTouchSupport() {
     const svg = document.getElementById('usa-map');
     let lastTap = 0;
     
-    // Prevent double-tap zoom on mobile
+    // Prevent double-tap zoom
     svg.addEventListener('touchend', function(e) {
         const currentTime = new Date().getTime();
         const tapLength = currentTime - lastTap;
@@ -289,49 +280,34 @@ function addTouchSupport() {
         
         lastTap = currentTime;
     }, { passive: false });
-    
-    // Improve touch responsiveness
-    const states = document.querySelectorAll('.state');
-    states.forEach(state => {
-        state.addEventListener('touchstart', function() {
-            this.style.transition = 'fill 0.1s ease';
-        }, { passive: true });
-    });
 }
 
 /**
  * Handle viewport resize events
- * Ensures responsive behavior on orientation change
  */
 window.addEventListener('resize', function() {
-    // Debounce resize events
     clearTimeout(window.resizeTimer);
     window.resizeTimer = setTimeout(function() {
-        // Re-render map if needed for optimal display
-        console.log('Viewport resized - optimizing display');
+        console.log('Viewport resized - map adjusting');
     }, 250);
 });
 
 /**
- * Handle orientation change for mobile devices
+ * Handle orientation change
  */
 window.addEventListener('orientationchange', function() {
     setTimeout(function() {
-        // Adjust layout after orientation change
-        console.log('Orientation changed - adjusting layout');
+        console.log('Orientation changed');
     }, 100);
 });
 
-// Security: Prevent console manipulation in production
-if (typeof window !== 'undefined') {
-    // Disable right-click context menu on map to prevent tampering
-    document.getElementById('usa-map')?.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        return false;
-    });
-}
+// Security: Disable context menu on map
+document.getElementById('usa-map')?.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+});
 
 // Log initialization
-console.log('USA Glassomorphic Map initialized - Ready for interaction');
+console.log('US Political Dashboard initialized');
 console.log('Authors: Puppy Pilot & Anacondy');
 console.log('"For God and country" - Zero Dark Thirty');
