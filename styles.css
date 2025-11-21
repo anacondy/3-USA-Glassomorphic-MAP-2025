@@ -259,7 +259,7 @@ body {
 }
 
 /* Specific optimization for 20:9 aspect ratio (taller phones) */
-@media screen and (max-aspect-ratio: 20/9) and (min-aspect-ratio: 16/9) {
+@media screen and (min-aspect-ratio: 9/20) and (max-aspect-ratio: 9/16) {
     .map-container {
         min-height: 250px;
     }

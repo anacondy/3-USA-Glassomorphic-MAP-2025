@@ -247,30 +247,26 @@ function handleStateClick(stateElement) {
 
 /**
  * Update the information panel with state data
- * Sanitizes all output to prevent XSS attacks
+ * Uses textContent to prevent XSS attacks (automatically escapes HTML)
  * @param {Object} data - State data object
  */
 function updateInfoPanel(data) {
-    // Sanitize function to prevent XSS
-    const sanitize = (str) => {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    };
-    
-    // Update DOM elements with sanitized data
-    document.getElementById('state-name').textContent = sanitize(data.name);
-    document.getElementById('state-info').textContent = `Explore ${sanitize(data.name)} - The ${sanitize(data.capital)} State`;
-    document.getElementById('state-capital').textContent = sanitize(data.capital);
-    document.getElementById('state-population').textContent = sanitize(data.population);
-    document.getElementById('state-area').textContent = sanitize(data.area);
+    // Update DOM elements - textContent automatically prevents XSS
+    document.getElementById('state-name').textContent = data.name;
+    document.getElementById('state-info').textContent = `Explore ${data.name} - The ${data.capital} State`;
+    document.getElementById('state-capital').textContent = data.capital;
+    document.getElementById('state-population').textContent = data.population;
+    document.getElementById('state-area').textContent = data.area;
     
     // Smooth scroll to info panel on mobile
     if (window.innerWidth < 768) {
-        document.querySelector('.info-panel').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'nearest' 
-        });
+        const infoPanel = document.querySelector('.info-panel');
+        if (infoPanel) {
+            infoPanel.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'nearest' 
+            });
+        }
     }
 }
 
